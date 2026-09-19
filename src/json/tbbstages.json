@@ -1902,6 +1902,10 @@
             "normal": "https://static.wikia.nocookie.net/the-battle-bricks/images/8/8a/CH5_Second_Stage_Hard.png",
             "tumore": "https://static.wikia.nocookie.net/the-battle-bricks/images/4/4b/TCH5_Second_Stage_Challenge.png"
         },
+       "CH5_Second_Stage_Gloom": {
+            "normal": "https://static.wikia.nocookie.net/the-battle-bricks/images/b/b6/CH5_Second_Stage_Gloom.png",
+            "tumore": "https://static.wikia.nocookie.net/the-battle-bricks/images/d/d4/TCH5_Second_Stage_Gloom.png"
+        }, 
         "CH5_Carnival_Disaster": {
             "normal": "https://static.wikia.nocookie.net/the-battle-bricks/images/7/73/CH5_Carnival_Disaster.png",
             "tumore": "https://static.wikia.nocookie.net/the-battle-bricks/images/5/54/TCH5_Carnival_Disaster.png"
