@@ -3243,7 +3243,7 @@
         {
             "name": "Edmond",
             "image": "https://static.wikia.nocookie.net/the-battle-bricks/images/6/6d/Edmond.png",
-            "alt": "Oscar"
+            "normal": "Oscar"
         },
         {
             "name": "Lichen",
