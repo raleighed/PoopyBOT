@@ -267,7 +267,7 @@ functions.overlapsAllowList = function (match, allowRanges) {
 functions.maskRange = function (str, start, end) {
     return (
         str.slice(0, start) +
-        "#".repeat(end - start) +
+        "[]" /* "#".repeat(end - start) */ +
         str.slice(end)
     )
 }
