@@ -188,7 +188,6 @@ async function start() {
                     config: {
                         testing: true,
                         globalPrefix: '2p:',
-                        intents: 53608447,
                         database: 'testdata'
                     }
                 }
