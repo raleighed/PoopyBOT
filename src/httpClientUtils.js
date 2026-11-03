@@ -24,6 +24,7 @@ const clientHeaders = {
 }
 
 const providers = [
+    "searxng",
     "duckduckgo",
     "startpage",
     "google",
@@ -56,7 +57,7 @@ const axiosClient = axios.create({
     headers: clientHeaders
 })
 
-let providerSearchOrder = ["duckduckgo", "startpage"]
+let providerSearchOrder = ["searxng"]
 
 async function processQueue(queue, interval = 5000) {
     if (queue.active || queue.jobs.length === 0) return
@@ -324,7 +325,7 @@ async function fetchImages(query, {
         {
             title: "Poopy Image Search Has Failed",
             image: "https://i.imgur.com/K5kyI8P.png",
-            url: "https://poopybot.up.railway.app/"
+            url: process.env.BOT_WEBSITE ?? "https://i.imgur.com/K5kyI8P.png"
         }
     ]
 
@@ -341,6 +342,42 @@ async function fetchImages(query, {
 
     async function performProviderSearch(provider) {
         switch (provider) {
+            case "searxng": {
+                const searchUrl = `https://searx.projectlounge.pw/search?format=json&safesearch=2&language=en`
+                    + `&engines=privacywall+images%2Cgoogle+cse+images&q=${encodeURIComponent(query)}`
+
+                return enqueue(clientImgQueries[provider], () =>
+                    axiosClient.get(searchUrl).then((res) => {
+                        const images = res.data.results
+                            .map(result => {
+                                const image = result.img_src
+                                const source = result.url
+
+                                if ([image, source].some(s => {
+                                    if (typeof s != "string") return true
+                                    try {
+                                        if (new URL(image).protocol != "https:") return true
+                                    } catch { return true }
+                                    return false
+                                })) return
+
+                                return {
+                                    title: result.title || "SearXNG Image Result",
+                                    image,
+                                    url: source
+                                }
+                            })
+                            .filter(Boolean)
+                            .filter(filterResults)
+
+                        return images
+                    }).catch(() => {
+                        clientImgQueries[provider].cooldown = true
+                        setTimeout(() => clientImgQueries[provider].cooldown = false, 30_000)
+                        return failImageResults
+                    }))
+            }
+
             case "duckduckgo": {
                 return enqueue(clientImgQueries[provider], () =>
                     ddgs(query, { safesearch: unsafe ? "off" : "on" }).then(results => {
@@ -442,13 +479,19 @@ async function fetchImages(query, {
 
     let searchResults = failImageResults
     for (const provider of searchProvider ? [searchProvider] : providerSearchOrder) {
-        if (clientImgResults[provider]?.[query]) return clientImgResults[provider][query]
-        if (clientImgQueries[provider]?.cooldown) return failImageResults
+        const lastProviderResults = clientImgResults[provider]?.[query]?.results ?? clientImgResults[provider]?.[query]
+        const lastProviderSearch = clientImgResults[provider]?.[query]?.lastSearch ?? 0
+
+        if ((Date.now() - lastProviderSearch) < 60_000 * 30) return lastProviderResults
+        if (clientImgQueries[provider]?.cooldown) return lastProviderResults ?? failImageResults
 
         searchResults = await performProviderSearch(provider).catch(() => { }) ?? failImageResults
         if (searchResults != failImageResults) {
             clientImgResults[provider] ??= {}
-            clientImgResults[provider][query] = searchResults
+            clientImgResults[provider][query] = {
+                lastSearch: Date.now(),
+                results: searchResults
+            }
 
             fs.writeJSONSync("data/imagesearchdata.json", clientImgResults)
 
@@ -466,23 +509,6 @@ async function uploadToFileHost(file) {
         async () => {
             const form = new FormData()
 
-            form.append("file", fs.readFileSync(file), filename)
-
-            return axiosClient.post(
-                "https://frisk.page/api/files/upload",
-                form,
-                {
-                    headers: {
-                        ...clientHeaders,
-                        ...form.getHeaders(),
-                        "Referer": "https://frisk.page/"
-                    }
-                }
-            ).then((res) => res.data?.file_url)
-        },
-        async () => {
-            const form = new FormData()
-
             form.append("files[]", fs.readFileSync(file), filename)
 
             return axiosClient.post(
@@ -496,6 +522,23 @@ async function uploadToFileHost(file) {
                     }
                 }
             ).then((res) => res.data?.files?.[0]?.url)
+        },
+        async () => {
+            const form = new FormData()
+
+            form.append("file", fs.readFileSync(file), filename)
+
+            return axiosClient.post(
+                "https://frisk.page/api/files/upload",
+                form,
+                {
+                    headers: {
+                        ...clientHeaders,
+                        ...form.getHeaders(),
+                        "Referer": "https://frisk.page/"
+                    }
+                }
+            ).then((res) => res.data?.file_url)
         },
         async () => catbox.upload(file),
         async () => litterbox.upload(file)
