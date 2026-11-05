@@ -677,7 +677,7 @@ function Lunicode() {
             },
             encode: function(r) {
                 var t, o = "";
-                for (var i in r) {
+                for (var i = 0; i < r.length; i++) {
                     if (t = r[i], this.options.middle && (t += this.diacriticsMiddle[Math.floor(Math.random() * this.diacriticsMiddle.length)]), this.options.top)
                         for (var h = this.diacriticsTop.length - 1, n = 0, a = this.options.maxHeight - Math.random() * (this.options.randomization / 100 * this.options.maxHeight); a > n; n++) t += this.diacriticsTop[Math.floor(Math.random() * h)];
                     if (this.options.bottom)
@@ -688,7 +688,7 @@ function Lunicode() {
             },
             decode: function(r) {
                 var t, o = "";
-                for (var i in r) t = r[i].charCodeAt(0), (768 > t || t > 865) && (o += r[i]);
+                for (var i = 0; i < r.length; i++) t = r[i].charCodeAt(0), (768 > t || t > 865) && (o += r[i]);
                 return o
             },
             diacriticsTop: [],
@@ -713,14 +713,14 @@ function Lunicode() {
             encode: function(r) {
                 var t, o = "",
                     h = !0;
-                for (var i in r) t = this.map[r[i]], "undefined" == typeof t && (r[i].charCodeAt(0) >= 33 ? (t = r[i] + String.fromCharCode(8413), h || (t = String.fromCharCode(8239) + String.fromCharCode(160) + String.fromCharCode(160) + String.fromCharCode(8239) + t)) : t = r[i]), o += t, h = "\n" == t;
+                for (var i = 0; i < r.length; i++) t = this.map[r[i]], "undefined" == typeof t && (r[i].charCodeAt(0) >= 33 ? (t = r[i] + String.fromCharCode(8413), h || (t = String.fromCharCode(8239) + String.fromCharCode(160) + String.fromCharCode(160) + String.fromCharCode(8239) + t)) : t = r[i]), o += t, h = "\n" == t;
                 return o
             },
             decode: function(r) {
                 var t, o = "",
                     h = "";
-                for (var i in r) t = this.mapInverse[r[i]], o += "undefined" == typeof t ? r[i] : t;
-                for (var i in o) t = o[i].charCodeAt(0), 160 != t && 8239 != t && 8413 != t && (h += o[i]);
+                for (var i = 0; i < r.length; i++) t = this.mapInverse[r[i]], o += "undefined" == typeof t ? r[i] : t;
+                for (var i = 0; i < o.length; i++) t = o[i].charCodeAt(0), 160 != t && 8239 != t && 8413 != t && (h += o[i]);
                 return h
             },
             map: {},
@@ -731,12 +731,12 @@ function Lunicode() {
             encode: function(r) {
                 var t, o = "",
                     h = !0;
-                for (var i in r) r[i].charCodeAt(0) >= 33 ? (t = r[i] + String.fromCharCode(8414), h || (t = String.fromCharCode(8239) + String.fromCharCode(160) + String.fromCharCode(160) + String.fromCharCode(8239) + t)) : t = r[i], o += t, h = "\n" == t;
+                for (var i = 0; i < r.length; i++) r[i].charCodeAt(0) >= 33 ? (t = r[i] + String.fromCharCode(8414), h || (t = String.fromCharCode(8239) + String.fromCharCode(160) + String.fromCharCode(160) + String.fromCharCode(8239) + t)) : t = r[i], o += t, h = "\n" == t;
                 return o
             },
             decode: function(r) {
                 var t, o = "";
-                for (var i in r) t = r[i].charCodeAt(0), 160 != t && 8239 != t && 8414 != t && (o += r[i]);
+                for (var i = 0; i < r.length; i++) t = r[i].charCodeAt(0), 160 != t && 8239 != t && 8414 != t && (o += r[i]);
                 return o
             }
         },
@@ -745,12 +745,12 @@ function Lunicode() {
             encode: function(r) {
                 var t, o = "",
                     h = !0;
-                for (var i in r) r[i].charCodeAt(0) >= 33 ? (t = r[i] + String.fromCharCode(8419), h || (t = String.fromCharCode(160) + String.fromCharCode(160) + String.fromCharCode(160) + t)) : t = r[i], o += t, h = "\n" == t;
+                for (var i = 0; i < r.length; i++) r[i].charCodeAt(0) >= 33 ? (t = r[i] + String.fromCharCode(8419), h || (t = String.fromCharCode(160) + String.fromCharCode(160) + String.fromCharCode(160) + t)) : t = r[i], o += t, h = "\n" == t;
                 return o
             },
             decode: function(r) {
                 var t, o = "";
-                for (var i in r) t = r[i].charCodeAt(0), 160 != t && 8239 != t && 8419 != t && (o += r[i]);
+                for (var i = 0; i < r.length; i++) t = r[i].charCodeAt(0), 160 != t && 8239 != t && 8419 != t && (o += r[i]);
                 return o
             }
         },
