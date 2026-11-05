@@ -917,6 +917,9 @@ function Lunicode() {
     }
 }
 
+var qi = -1;
+var qa = ["❝", "❞"];
+
 function cuteText(text) {
     if (text.trim() === "") return "";
     qi = -1;
@@ -935,9 +938,6 @@ function cuteWord(word) {
     word = emojiReplace(word);
     return scriptify(word);
 }
-
-var qi = -1;
-var qa = ["❝", "❞"];
 
 function quotes() {
     qi++;
@@ -1042,12 +1042,16 @@ function randomElement(a) {
     return a[Math.floor(Math.random() * a.length)];
 }
 
+var _combining = /[\u0300-\u036F\u1AB0-\u1AFF\u1DC0-\u1DFF\u20D0-\u20FF\uFE20-\uFE2F]+/;
+var _notCombining = /[^\u0300-\u036F\u1AB0-\u1AFF\u1DC0-\u1DFF\u20D0-\u20FF\uFE20-\uFE2F]/;
+
 function esrever(e) {
-    e = e.replace(/(<%= allExceptCombiningMarks %>)(<%= combiningMarks %>+)/g, function (e, o, r) {
-        return esrever(r) + o
-    }).replace(i, "$2$1");
-    for (var o = "", r = e.length; r--;) o += e.charAt(r);
-    return o
+    e = e.replace(new RegExp('(' + _notCombining.source + ')(' + _combining.source + ')', 'g'),
+        function (_, base, marks) { return esrever(marks) + base; })
+        .replace(new RegExp('(' + _combining.source + ')(' + _notCombining.source + ')', 'g'), '$2$1');
+    var o = "";
+    for (var r = e.length; r--;) o += e.charAt(r);
+    return o;
 }
 
 function fullCrazy(text) {
