@@ -1630,7 +1630,7 @@
         {
             "name": "Speeddemon",
             "image": "https://static.wikia.nocookie.net/the-battle-bricks/images/1/16/Speeddemon.png",
-            "alt": "Roadbumper"
+            "normal": "Roadbumper"
         },
         {
             "name": "Rockstar Radical",
