@@ -6199,7 +6199,7 @@ functions.getUploadLimit = function (msg) {
     switch (msg.guild.premiumTier) {
         case 3: return 1024 * 1024 * 100
         case 2: return 1024 * 1024 * 50
-        default: return 1024 * 1024 * 10
+        default: return 1024 * 1024 * 20
     }
 }
 
